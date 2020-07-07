@@ -39,7 +39,7 @@ var	district_config	= {
 	, select_option_type: 2		//select下拉键值对应关系（1:行政区代码=>区域名称，2:区域名称=>区域名称）
 	, options_first_char: 1		//select的option选项前是否带上首字母（1带上，0不带）
 };
-document.ready	= function(){
+$(document).ready(function(){
 	/**  效果1：动态展现  **/
 	getDistrictDynamic('china_district1', 0);
 	districtDynamicDefaultValue('china_district1', '广东', '广州', '白云区', '景泰街道');	//当select_option_type=2时，直接使用区域名称初始化select被选中的值
@@ -52,7 +52,7 @@ document.ready	= function(){
 	districtStaticDefaultValue('china_district2', '广东', '广州', '白云区', '景泰街道');	//当select_option_type=2时，直接使用区域名称初始化select被选中的值
 	//districtStaticDefaultValue('china_district2', '440000', '440100', '440111', '440111004');	//当select_option_type=1时，使用区域id初始化select被选中的值
 	/**  ****  **/
-};
+});
 </script>
 </body>
 </html>
