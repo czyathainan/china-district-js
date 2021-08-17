@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>H5省市区县选择特效</title>
+	<script src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/jquery-1.9.1.min.js"></script>
+	<script src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/flexible.min.js"></script>
+</head>
+<body>
+<style type="text/css">
+	body{font-size:0.3rem; background:#efefef;}
+	ul,ol,li{margin:0 auto; padding:0; list-style:none;}
+	.hide{display:none;}
+	.left{float:left;}
+	.right{float:right;}
+	.clear{clear:both;}
+	
+	.h5_district_selector{width:7.5rem; height:0.6rem;}
+	.h5_district_selector .dis_sel_bar{border-bottom:1px solid #cecece; width:7.5rem; padding-bottom:0.2rem; position:absolute; z-index:11;}
+	.h5_district_selector .h5_checked_area{display:block; width:100%; padding:0 0 0 0.1rem; font-size:0.35rem;}
+	.h5_district_selector .h5_checked_area:after{display:block; content:' '; height:0.4rem; width:0.4rem; float:right; margin:0.11rem 0 0 0.1rem; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
+	.h5_district_selector .dis_sel_items{border:1px solid #cecece; width:10rem; background:#ffffff; padding:0.2rem 0; margin:0.7rem 0 0 -5rem; -moz-box-shadow:0 0 0.1rem #ddd; -webkit-box-shadow:0 0 0.1rem #ddd; box-shadow:0 0 0.1rem #ddd; position:absolute; z-index:15; left:50%;}
+	.h5_district_selector .dis_close{display:blick; float:right; width:0.4rem; margin:0.1rem 0.15rem 0 auto; cursor:pointer;}
+	.h5_district_selector .active_district{height:0.7rem;}
+	.h5_district_selector .active_district li{border:1px solid #cecece; border-bottom:0; float:left; height:100%; text-align:center; padding:0 0.05rem 0 0.15rem; margin-right:0.2rem; line-height:2.0; font-size:0.35rem; cursor:pointer;}
+	.h5_district_selector .active_district li:after{display:block; content:' '; height:0.35rem; width:0.35rem; float:right; margin:0.15rem 0 0 0.1rem; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
+	.h5_district_selector .active_district .active_item{border:1px solid #e4393c !important; border-bottom:0 !important; /*height:0.74rem;*/ background:#ffffff;}
+	.h5_district_selector .current_items{border-top:1px solid #e4393c; padding:0.2rem 0;}
+	.h5_district_selector .current_items li{float:left; width:25%; padding:0; font-size:0.35rem;}
+	.h5_district_selector .current_items li a{cursor:pointer; display:block; padding:0.2rem 0 0.2rem 0.15rem; text-decoration:none; color:#000000;}
+	.h5_district_selector .current_items li a:hover, .h5_district_selector .current_items li a:focus{background:#cecece;}
+</style>
+
+
+<div style="width:10rem; height:13rem; margin:0 auto; padding-top:0.5rem; background:#ffffff;">
+	<div class="left" style="font-size:0.35rem;">请选择区域：</div>
+	<div class="h5_district_selector left">
+		<div class="dis_sel_bar">
+			<div class="h5_checked_area left">请选择地区</div>
+			<input type="hidden" class="district_value" name="test_value" value="" />
+		</div>
+		
+		<div class="dis_sel_items hide">
+			<img src="https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
+			<ul class="active_district">
+				<!--li class="active_item">请选择</li-->
+			</ul>
+			<ul class="current_items">省份、城市、区县选择项目</ul>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+$(function(){
+	$('.h5_checked_area').on('click', function(){
+		$('.h5_district_selector .dis_sel_items').removeClass('hide');
+		$('.active_district').html('');
+		show_selector_items(0);
+	});
+	$('.dis_close').on('click', function(){
+		$('.h5_district_selector .dis_sel_items').addClass('hide');
+	});
+	$('body').on('click', '.h5_district_selector .active_district li', function(){
+		var did	= $('span', $(this)).attr('data-topid');
+		var is_remove_tail	= 0;
+		$('.h5_district_selector .active_district li').each(function(){
+			if(!is_remove_tail && $('span', $(this)).attr('data-topid')==did)
+			{
+				is_remove_tail	= 1;
+			}
+			if(is_remove_tail)
+			{
+				$(this).remove();
+			}
+		});
+		show_selector_items(did);
+	});
+});
+function show_selector_items(topid)
+{
+	$.ajax({
+		type:"GET", 
+		url:'https://api.jiayyy.com/v1/china-district/get-sub-district', 
+		data:'topid='+topid+'&options_first_char=0', 
+		dataType:'json', 
+		async: false, 
+		success: function(msg){
+			var s	= '';
+			if(msg.status == 1)
+			{
+				if(!msg.data.length)
+				{
+					$('.dis_close').click();
+					$('.h5_district_selector .current_items').html('');
+					var area_str	= '';
+					$('.active_district li').each(function(){
+						area_str	+= (area_str ? '/' : '')+$(this).html();
+					});
+					$('.h5_checked_area').html(area_str);
+					$('input.district_value').val(area_str.replace(/\<[^>]*>/g, ""));
+					return true;
+				}
+				
+				for(var i in msg.data)
+				{
+					s	+= '<li><a data-name="'+msg.data[i].name+'" data-id="'+msg.data[i].id+'" data-topid="'+msg.data[i].topid+'" onclick="selector_func(this);">'+msg.data[i].name+'</a></li>';
+				}
+				$('.h5_district_selector .current_items').html(s);
+				$('.h5_district_selector .active_district').append('<li class="active_item">请选择</li>');
+			}
+			else
+			{
+				$('.h5_district_selector .current_items').html('error');
+			}
+		}
+	});
+}
+function selector_func(obj)
+{
+	event.cancelBubble=true;
+	$('.h5_district_selector .active_district li').eq($('.active_district li').length-1).html('<span data-id="'+$(obj).attr('data-id')+'" data-topid="'+$(obj).attr('data-topid')+'">'+$(obj).attr('data-name')+'</span>');
+	$('.h5_district_selector .active_district li').removeClass('active_item');
+	show_selector_items($(obj).attr('data-id'));
+}
+</script>
+
+
+</body>
+</html>
