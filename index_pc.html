@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PC省市区县选择特效</title>
     <link href="http://jiayyy.oss-cn-shanghai.aliyuncs.com/common_css/bootstrap.css" rel="stylesheet">
-	<script src="http://jiayyy.oss-cn-shanghai.aliyuncs.com/jquery-1.9.1.min.js"></script></head>
+	<script src="http://jiayyy.oss-cn-shanghai.aliyuncs.com/jquery-1.9.1.min.js"></script>
+</head>
 <body>
 <style type="text/css">
-	body{font-size:12px; padding:50px;}
+	body{font-size:12px;}
 	ul,ol,li{margin:0 auto; padding:0; list-style:none;}
 	.hide{display:none;}
 	.left{float:left;}
@@ -16,22 +17,22 @@
 	.clear{clear:both;}
 	
 	.district_selector{height:25px;}
-	.district_selector .dis_sel_bar{position:absolute; z-index:11; white-space:nowrap;}
+	.district_selector .dis_sel_bar{position:absolute; z-index:9998; white-space:nowrap;}
 	.district_selector .checked_area{border:1px solid #cecece; border-radius:3px; min-width:40px; padding:0 5px 0 5px; line-height:2.0;}
-	.district_selector .checked_area:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
-	.district_selector .dis_sel_items{border:1px solid #cecece; width:500px; background:#ffffff; padding:10px; margin:24px auto 0 auto; -moz-box-shadow:0 0 5px #ddd; -webkit-box-shadow:0 0 5px #ddd; box-shadow:0 0 5px #ddd; position:absolute; z-index:10;}
+	.district_selector .checked_area:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
+	.district_selector .dis_sel_items{border:1px solid #cecece; width:500px; background:#ffffff; padding:10px; margin:24px auto 0 auto; -moz-box-shadow:0 0 5px #ddd; -webkit-box-shadow:0 0 5px #ddd; box-shadow:0 0 5px #ddd; position:absolute; z-index:9999;}
 	.district_selector .dis_close{display:blick; float:right; margin:-18px -15px 0 auto; cursor:pointer;}
 	.district_selector .active_district{height:25px;}
 	.district_selector .active_district li{border:1px solid #cecece; border-bottom:0; float:left; height:100%; text-align:center; padding:0 5px 0 8px; margin-right:10px; line-height:2.0; cursor:pointer;}
-	.district_selector .active_district li:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
+	.district_selector .active_district li:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
 	.district_selector .active_district .active_item{border:2px solid #e4393c !important; border-bottom:0 !important; height:27px !important;}
 	.district_selector .current_items{border-top:2px solid #e4393c; padding:15px 0;}
 	.district_selector .current_items li{float:left; width:95px; padding:5px 0;}
 	.district_selector .current_items li a{cursor:pointer;}
 </style>
 
-
-<div class="left"><b>请选择区域：</b></div>
+<!-- 同一页面支持多处调用互不影响 -->
+<div class="left">请选择区域：</div>
 <div class="district_selector left">
 	<div class="dis_sel_bar">
 		<div class="checked_area left">请选择</div>
@@ -39,7 +40,7 @@
 	</div>
 	
 	<div class="dis_sel_items hide">
-		<img src="https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
+		<img src="http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
 		<ul class="active_district">
 			<!--li class="active_item">请选择</li-->
 		</ul>
@@ -47,25 +48,34 @@
 		<div class="clear"></div>
 	</div>
 </div>
-
+<p>&nbsp; </p><p>&nbsp; </p>
 
 
 <script type="text/javascript">
 $(function(){
 	$('.checked_area').on('click', function(){
-		$('.district_selector .checked_area').css({'border-bottom':0});
-		$('.district_selector .dis_sel_items').removeClass('hide');
-		$('.active_district').html('');
-		show_selector_items(0);
+		$('.dis_close').click();
+		
+		var topObj	= $(this).closest('.district_selector');
+		$('.checked_area', topObj).css({'border-bottom':0});
+		$('.dis_sel_items', topObj).removeClass('hide');
+		$('.active_district', topObj).html('');
+		show_selector_items($(this), 0);
 	});
 	$('.dis_close').on('click', function(){
-		$('.district_selector .dis_sel_items').addClass('hide');
-		$('.district_selector .checked_area').css({'border-bottom':'1px solid #cecece'});
+		var topObj	= $(this).closest('.district_selector');
+		$('.dis_sel_items', topObj).addClass('hide');
+		$('.checked_area', topObj).css({'border-bottom':'1px solid #cecece'});
 	});
 	$('body').on('click', '.active_district li', function(){
+		var topObj	= $(this).closest('.district_selector');
 		var did	= $('span', $(this)).attr('data-topid');
+		if(!did)
+		{
+			return false;
+		}
 		var is_remove_tail	= 0;
-		$('.active_district li').each(function(){
+		$('.active_district li', topObj).each(function(){
 			if(!is_remove_tail && $('span', $(this)).attr('data-topid')==did)
 			{
 				is_remove_tail	= 1;
@@ -75,11 +85,12 @@ $(function(){
 				$(this).remove();
 			}
 		});
-		show_selector_items(did);
+		show_selector_items($('.active_district', topObj), did);
 	});
 });
-function show_selector_items(topid)
+function show_selector_items(obj, topid)
 {
+	var topObj	= $(obj).closest('.district_selector');
 	$.ajax({
 		type:"GET", 
 		url:'https://api.jiayyy.com/v1/china-district/get-sub-district', 
@@ -92,14 +103,14 @@ function show_selector_items(topid)
 			{
 				if(!msg.data.length)
 				{
-					$('.dis_close').click();
-					$('.district_selector .current_items').html('');
+					$('.dis_close', topObj).click();
+					$('.current_items', topObj).html('');
 					var area_str	= '';
-					$('.active_district li').each(function(){
+					$('.active_district li', topObj).each(function(){
 						area_str	+= (area_str ? ' / ' : '')+$(this).html();
 					});
-					$('.checked_area').html(area_str);
-					$('input[name=district_value]').val(area_str.replace(/\<[^>]*>/g, ""));
+					$('.checked_area', topObj).html(area_str);
+					$('input[name=district_value]', topObj).val(area_str.replace(/\<[^>]*>/g, ""));
 					return true;
 				}
 				
@@ -107,12 +118,12 @@ function show_selector_items(topid)
 				{
 					s	+= '<li><a data-name="'+msg.data[i].name+'" data-id="'+msg.data[i].id+'" data-topid="'+msg.data[i].topid+'" onclick="selector_func(this);">'+msg.data[i].name+'</a></li>';
 				}
-				$('.district_selector .current_items').html(s);
-				$('.district_selector .active_district').append('<li class="active_item">请选择</li>');
+				$('.current_items', topObj).html(s);
+				$('.active_district', topObj).append('<li class="active_item">请选择</li>');
 			}
 			else
 			{
-				$('.district_selector .current_items').html('error');
+				$('.current_items', topObj).html('error');
 			}
 		}
 	});
@@ -120,9 +131,10 @@ function show_selector_items(topid)
 function selector_func(obj)
 {
 	event.cancelBubble=true;
-	$('.district_selector .active_district li').eq($('.active_district li').length-1).html('<span data-id="'+$(obj).attr('data-id')+'" data-topid="'+$(obj).attr('data-topid')+'">'+$(obj).attr('data-name')+'</span>');
-	$('.district_selector .active_district li').removeClass('active_item');
-	show_selector_items($(obj).attr('data-id'));
+	var topObj	= $(obj).closest('.district_selector');
+	$('.active_district li', topObj).eq($('.active_district li', topObj).length-1).html('<span data-id="'+$(obj).attr('data-id')+'" data-topid="'+$(obj).attr('data-topid')+'">'+$(obj).attr('data-name')+'</span>');
+	$('.active_district li', topObj).removeClass('active_item');
+	show_selector_items($(obj).closest('.current_items'), $(obj).attr('data-id'));
 }
 </script>
 
