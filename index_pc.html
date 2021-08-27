@@ -7,9 +7,9 @@
     <link href="http://jiayyy.oss-cn-shanghai.aliyuncs.com/common_css/bootstrap.css" rel="stylesheet">
 	<script src="http://jiayyy.oss-cn-shanghai.aliyuncs.com/jquery-1.9.1.min.js"></script>
 </head>
-<body>
+<body style="padding:50px;">
 <style type="text/css">
-	body{font-size:12px; padding:50px;}
+	body{font-size:12px;}
 	ul,ol,li{margin:0 auto; padding:0; list-style:none;}
 	.hide{display:none;}
 	.left{float:left;}
@@ -19,12 +19,12 @@
 	.district_selector{height:25px;}
 	.district_selector .dis_sel_bar{position:absolute; z-index:9998; white-space:nowrap;}
 	.district_selector .checked_area{border:1px solid #cecece; border-radius:3px; min-width:40px; padding:0 5px 0 5px; line-height:2.0;}
-	.district_selector .checked_area:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
+	.district_selector .checked_area:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
 	.district_selector .dis_sel_items{border:1px solid #cecece; width:500px; background:#ffffff; padding:10px; margin:24px auto 0 auto; -moz-box-shadow:0 0 5px #ddd; -webkit-box-shadow:0 0 5px #ddd; box-shadow:0 0 5px #ddd; position:absolute; z-index:9999;}
 	.district_selector .dis_close{display:blick; float:right; margin:-18px -15px 0 auto; cursor:pointer;}
 	.district_selector .active_district{height:25px;}
 	.district_selector .active_district li{border:1px solid #cecece; border-bottom:0; float:left; height:100%; text-align:center; padding:0 5px 0 8px; margin-right:10px; line-height:2.0; cursor:pointer;}
-	.district_selector .active_district li:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
+	.district_selector .active_district li:after{display:block; content:' '; height:12px; width:12px; float:right; margin:6px 0 0 3px; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 1px 4px no-repeat #ffffff; background-size:100%;}
 	.district_selector .active_district .active_item{border:2px solid #e4393c !important; border-bottom:0 !important; height:27px !important;}
 	.district_selector .current_items{border-top:2px solid #e4393c; padding:15px 0;}
 	.district_selector .current_items li{float:left; width:95px; padding:5px 0;}
@@ -33,17 +33,14 @@
 
 <!-- 同一页面支持多处调用互不影响 -->
 <div class="left">请选择区域：</div>
-<div class="district_selector left">
+<div class="district_selector left" data-district-depth="4"><!-- data-district-depth:最多调用几层地址 -->
 	<div class="dis_sel_bar">
 		<div class="checked_area left">请选择</div>
 		<input type="hidden" name="district_value" value="" />
 	</div>
-	
 	<div class="dis_sel_items hide">
-		<img src="http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
-		<ul class="active_district">
-			<!--li class="active_item">请选择</li-->
-		</ul>
+		<img src="https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
+		<ul class="active_district"></ul>
 		<ul class="current_items">省份、城市、区县选择项目</ul>
 		<div class="clear"></div>
 	</div>
@@ -55,12 +52,11 @@
 $(function(){
 	$('.checked_area').on('click', function(){
 		$('.dis_close').click();
-		
 		var topObj	= $(this).closest('.district_selector');
 		$('.checked_area', topObj).css({'border-bottom':0});
 		$('.dis_sel_items', topObj).removeClass('hide');
 		$('.active_district', topObj).html('');
-		show_selector_items($(this), 0);
+		districtSelectorItems($(this), 0);
 	});
 	$('.dis_close').on('click', function(){
 		var topObj	= $(this).closest('.district_selector');
@@ -85,12 +81,13 @@ $(function(){
 				$(this).remove();
 			}
 		});
-		show_selector_items($('.active_district', topObj), did);
+		districtSelectorItems($('.active_district', topObj), did);
 	});
 });
-function show_selector_items(obj, topid)
+function districtSelectorItems(obj, topid)
 {
-	var topObj	= $(obj).closest('.district_selector');
+	var topObj		= $(obj).closest('.district_selector');
+	var max_depth	= $(topObj).attr('data-district-depth'); //最多调用几层地址
 	$.ajax({
 		type:"GET", 
 		url:'https://api.jiayyy.com/v1/china-district/get-sub-district', 
@@ -101,7 +98,7 @@ function show_selector_items(obj, topid)
 			var s	= '';
 			if(msg.status == 1)
 			{
-				if(!msg.data.length)
+				if(!msg.data.length || $('.active_district li', topObj).length>=parseInt(max_depth))
 				{
 					$('.dis_close', topObj).click();
 					$('.current_items', topObj).html('');
@@ -111,12 +108,13 @@ function show_selector_items(obj, topid)
 					});
 					$('.checked_area', topObj).html(area_str);
 					$('input[name=district_value]', topObj).val(area_str.replace(/\<[^>]*>/g, ""));
+					//地址选择完成时，你可以在这里添加接下来的操作...
 					return true;
 				}
 				
 				for(var i in msg.data)
 				{
-					s	+= '<li><a data-name="'+msg.data[i].name+'" data-id="'+msg.data[i].id+'" data-topid="'+msg.data[i].topid+'" onclick="selector_func(this);">'+msg.data[i].name+'</a></li>';
+					s	+= '<li><a data-name="'+msg.data[i].name+'" data-id="'+msg.data[i].id+'" data-topid="'+msg.data[i].topid+'" onclick="districtSelectorFunc(this);">'+msg.data[i].name+'</a></li>';
 				}
 				$('.current_items', topObj).html(s);
 				$('.active_district', topObj).append('<li class="active_item">请选择</li>');
@@ -128,15 +126,16 @@ function show_selector_items(obj, topid)
 		}
 	});
 }
-function selector_func(obj)
+function districtSelectorFunc(obj)
 {
 	event.cancelBubble=true;
 	var topObj	= $(obj).closest('.district_selector');
 	$('.active_district li', topObj).eq($('.active_district li', topObj).length-1).html('<span data-id="'+$(obj).attr('data-id')+'" data-topid="'+$(obj).attr('data-topid')+'">'+$(obj).attr('data-name')+'</span>');
 	$('.active_district li', topObj).removeClass('active_item');
-	show_selector_items($(obj).closest('.current_items'), $(obj).attr('data-id'));
+	districtSelectorItems($(obj).closest('.current_items'), $(obj).attr('data-id'));
 }
 </script>
+
 
 </body>
 </html>

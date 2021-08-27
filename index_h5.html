@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>H5省市区县选择特效</title>
 	<script src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/jquery-1.9.1.min.js"></script>
-	<script src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/flexible.min.js"></script>
 </head>
 <body>
+<script src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/flexible.min.js"></script>
 <style type="text/css">
 	body{font-size:0.3rem; background:#efefef;}
 	ul,ol,li{margin:0 auto; padding:0; list-style:none;}
@@ -18,34 +18,31 @@
 	
 	.h5_district_selector{width:7.5rem; height:0.6rem;}
 	.h5_district_selector .dis_sel_bar{border-bottom:1px solid #cecece; width:7.5rem; padding-bottom:0.2rem; position:absolute; z-index:11;}
-	.h5_district_selector .h5_checked_area{display:block; width:100%; padding:0 0 0 0.1rem; font-size:0.35rem;}
-	.h5_district_selector .h5_checked_area:after{display:block; content:' '; height:0.4rem; width:0.4rem; float:right; margin:0.11rem 0 0 0.1rem; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
-	.h5_district_selector .dis_sel_items{border:1px solid #cecece; width:10rem; background:#ffffff; padding:0.2rem 0; margin:0.7rem 0 0 -5rem; -moz-box-shadow:0 0 0.1rem #ddd; -webkit-box-shadow:0 0 0.1rem #ddd; box-shadow:0 0 0.1rem #ddd; position:absolute; z-index:15; left:50%;}
-	.h5_district_selector .dis_close{display:blick; float:right; width:0.4rem; margin:0.1rem 0.15rem 0 auto; cursor:pointer;}
-	.h5_district_selector .active_district{height:0.7rem;}
-	.h5_district_selector .active_district li{border:1px solid #cecece; border-bottom:0; float:left; height:100%; text-align:center; padding:0 0.05rem 0 0.15rem; margin-right:0.2rem; line-height:2.0; font-size:0.35rem; cursor:pointer;}
-	.h5_district_selector .active_district li:after{display:block; content:' '; height:0.35rem; width:0.35rem; float:right; margin:0.15rem 0 0 0.1rem; background:url(http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
-	.h5_district_selector .active_district .active_item{border:1px solid #e4393c !important; border-bottom:0 !important; /*height:0.74rem;*/ background:#ffffff;}
-	.h5_district_selector .current_items{border-top:1px solid #e4393c; padding:0.2rem 0;}
-	.h5_district_selector .current_items li{float:left; width:25%; padding:0; font-size:0.35rem;}
-	.h5_district_selector .current_items li a{cursor:pointer; display:block; padding:0.2rem 0 0.2rem 0.15rem; text-decoration:none; color:#000000;}
+	.h5_district_selector .h5_checked_area{display:block; width:100%; padding:0 0 0 0.1rem; font-size:0.45rem;}
+	.h5_district_selector .h5_checked_area:after{display:block; content:' '; height:0.4rem; width:0.4rem; float:right; margin:0.11rem 0 0 0.1rem; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
+	.h5_district_selector .dis_sel_items{border:1px solid #cecece; border-radius:0 0 0.3rem 0.3rem; width:10rem; background:#ffffff; padding:0.2rem 0 0.4rem 0; margin:0.7rem 0 0 -5rem; -moz-box-shadow:0 0.1rem 0.1rem #999; -webkit-box-shadow:0 0.1rem 0.1rem #999; box-shadow:0 0.1rem 0.1rem #999; position:absolute; z-index:15; left:50%;}
+	.h5_district_selector .dis_close{display:blick; float:right; width:0.5rem; margin:0 0.2rem 0 auto; cursor:pointer;}
+	.h5_district_selector .active_district{border-bottom:1px solid #e4393c; height:0.8rem; color:#000000;}
+	.h5_district_selector .active_district li{border:1px solid #cecece; border-bottom:0; float:left; height:100%; text-align:center; padding:0 0 0 0.12rem; margin-right:0.15rem; line-height:2.3; font-size:0.38rem; cursor:pointer;}
+	.h5_district_selector .active_district li:after{display:block; content:' '; height:0.35rem; width:0.35rem; float:right; margin:0.2rem 0 0 0.05rem; background:url(https://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/search.ele.png) 0.03rem 0.1rem no-repeat #ffffff; background-size:100%;}
+	.h5_district_selector .active_district .active_item{border:1px solid #e4393c !important; border-bottom:0 !important; background:#ffffff;}
+	.h5_district_selector .current_items{/*border-top:1px solid #e4393c;*/ padding:0.2rem 0; margin-left:0.05rem;}
+	.h5_district_selector .current_items li{float:left; width:25%; padding:0; font-size:0.38rem;}
+	.h5_district_selector .current_items li a{cursor:pointer; display:block; padding:0.2rem 0 0.2rem 0.15rem; line-height:1.2; text-decoration:none; color:#000000;}
 	.h5_district_selector .current_items li a:hover, .h5_district_selector .current_items li a:focus{background:#cecece;}
 </style>
 
 <!-- 同一页面支持多处调用互不影响 -->
 <div style="width:10rem; height:5rem; margin:0 auto; padding-top:0.5rem; background:#ffffff;">
 	<div class="left" style="font-size:0.35rem;">请选择区域：</div>
-	<div class="h5_district_selector left">
+	<div class="h5_district_selector left" data-district-depth="4"><!-- data-district-depth:最多调用几层地址 -->
 		<div class="dis_sel_bar">
 			<div class="h5_checked_area left">请选择地区</div>
 			<input type="hidden" class="district_value" name="test_value" value="" />
 		</div>
-		
 		<div class="dis_sel_items hide">
-			<img src="http://fxz-shop.oss-cn-hangzhou.aliyuncs.com/www/close_si.png" class="dis_close" />
-			<ul class="active_district">
-				<!--li class="active_item">请选择</li-->
-			</ul>
+			<img src="https://jiayyy.oss-cn-shanghai.aliyuncs.com/images/close6532.png" class="dis_close" />
+			<ul class="active_district"></ul>
 			<ul class="current_items">省份、城市、区县选择项目</ul>
 			<div class="clear"></div>
 		</div>
@@ -55,10 +52,11 @@
 <script type="text/javascript">
 $(function(){
 	$('.h5_checked_area').on('click', function(){
+		$('.dis_close').click();
 		var topObj	= $(this).closest('.h5_district_selector');
 		$('.dis_sel_items', topObj).removeClass('hide');
 		$('.active_district', topObj).html('');
-		show_selector_items($(this), 0);
+		district_selector_items($(this), 0);
 	});
 	$('.dis_close').on('click', function(){
 		$('.h5_district_selector .dis_sel_items').addClass('hide');
@@ -75,19 +73,19 @@ $(function(){
 			if(!is_remove_tail && $('span', $(this)).attr('data-topid')==did)
 			{
 				is_remove_tail	= 1;
-				return true;
 			}
 			if(is_remove_tail)
 			{
 				$(this).remove();
 			}
 		});
-		show_selector_items($(this), did);
+		district_selector_items($('.active_district', topObj), did);
 	});
 });
-function show_selector_items(obj, topid)
+function district_selector_items(obj, topid)
 {
-	var topObj	= $(obj).closest('.h5_district_selector');
+	var topObj		= $(obj).closest('.h5_district_selector');
+	var max_depth	= $(topObj).attr('data-district-depth'); //最多调用几层地址
 	$.ajax({
 		type:"GET", 
 		url:'https://api.jiayyy.com/v1/china-district/get-sub-district', 
@@ -98,7 +96,7 @@ function show_selector_items(obj, topid)
 			var s	= '';
 			if(msg.status == 1)
 			{
-				if(!msg.data.length)
+				if(!msg.data.length || $('.active_district li', topObj).length>=parseInt(max_depth))
 				{
 					$('.dis_close', topObj).click();
 					$('.current_items', topObj).html('');
@@ -108,6 +106,7 @@ function show_selector_items(obj, topid)
 					});
 					$('.h5_checked_area', topObj).html(area_str);
 					$('input.district_value', topObj).val(area_str.replace(/\<[^>]*>/g, ""));
+					//地址选择完成时，你可以在这里添加接下来的操作...
 					return true;
 				}
 				
@@ -131,9 +130,10 @@ function selector_func(obj)
 	var topObj	= $(obj).closest('.h5_district_selector');
 	$('.active_district li', topObj).eq($('.active_district li', topObj).length-1).html('<span data-id="'+$(obj).attr('data-id')+'" data-topid="'+$(obj).attr('data-topid')+'">'+$(obj).attr('data-name')+'</span>');
 	$('.active_district li', topObj).removeClass('active_item');
-	show_selector_items($(obj).closest('.current_items'), $(obj).attr('data-id'));
+	district_selector_items($(obj).closest('.current_items'), $(obj).attr('data-id'));
 }
 </script>
+
 
 </body>
 </html>
